@@ -2,50 +2,20 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Categories', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER.UNSIGNED
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: { msg: '名称已存在，请选择其他名称。' },
-        validate: {
-          notNull: { msg: '名称必须填写。' },
-          notEmpty: { msg: '名称不能为空。' },
-          len: { args: [2, 45], msg: '长度必须是2 ~ 45之间。' }
-        }
-      },
-      rank: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notNull: { msg: '排序必须填写。' },
-          notEmpty: { msg: '排序不能为空。' },
-          isInt: { msg: '排序必须为整数。' },
-          // isPositive(value) {
-          //   if (value <= 0) {
-          //     throw new Error('排序必须是正整数。');
-          //   }
-          // },
-          min: { args: [1], msg: '排序必须大于等于 1' }
-        },
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+    await queryInterface.bulkInsert('Categories', [
+      { name: '前端开发', rank: 1, createdAt: new Date(), updatedAt: new Date() },
+      { name: '后端开发', rank: 2, createdAt: new Date(), updatedAt: new Date() },
+      { name: '移动端开发', rank: 3, createdAt: new Date(), updatedAt: new Date() },
+      { name: '数据库', rank: 4, createdAt: new Date(), updatedAt: new Date() },
+      { name: '服务器运维', rank: 5, createdAt: new Date(), updatedAt: new Date() },
+      { name: '公共', rank: 6, createdAt: new Date(), updatedAt: new Date() },
+    ], {});
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Categories');
+    await queryInterface.bulkDelete('Categories', null, {});
   }
+
+
+
 };

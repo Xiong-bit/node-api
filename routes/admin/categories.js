@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Category } = require('../../models');
+const { Category,Course } = require('../../models');
 const { Op } = require('sequelize');
 const {
   NotFoundError,
@@ -53,7 +53,7 @@ router.get('/', async function (req, res) {
  */
 router.get('/:id', async function (req, res) {
   try {
-    const category = await getArticle(req);
+    const category = await getCategory(req);
     success(res, '查询分类成功。', { category });
   } catch (error) {
     failure(res, error);
@@ -81,7 +81,7 @@ router.post('/', async function (req, res) {
  */
 router.put('/:id', async function (req, res) {
   try {
-    const category = await getArticle(req);
+    const category = await getCategory(req);
     const body = filterBody(req);
 
     await category.update(body);
@@ -97,7 +97,12 @@ router.put('/:id', async function (req, res) {
  */
 router.delete('/:id', async function (req, res) {
   try {
-    const category = await getArticle(req);
+    const category = await getCategory(req);
+
+    const count = await Course.count({ where: { categoryId: req.params.id } });
+    if (count > 0) {
+      throw new Error('当前分类有课程，无法删除。');
+    }
 
     await category.destroy();
     success(res, '删除分类成功。');
@@ -106,19 +111,26 @@ router.delete('/:id', async function (req, res) {
   }
 });
 
-/**
- * 公共方法：查询当前分类
- */
-async function getArticle(req) {
-  const { id } = req.params;
 
-  const category = await Category.findByPk(id);
+async function getCategory(req) {
+  const { id } = req.params;
+  const condition = {
+    include: [
+      {
+        model: Course,
+        as: 'courses',
+      },
+    ]
+  }
+
+  const category = await Category.findByPk(id, condition);
   if (!category) {
     throw new NotFoundError(`ID: ${ id }的分类未找到。`)
   }
 
   return category;
 }
+
 
 /**
  * 公共方法：白名单过滤
