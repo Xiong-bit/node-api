@@ -17,6 +17,9 @@ const adminCoursesRouter = require('./routes/admin/courses');
 const adminChaptersRouter = require('./routes/admin/chapters');
 const adminChartsRouter = require('./routes/admin/charts');
 const adminAuthRouter = require('./routes/admin/auth');
+const categoriesRouter = require('./routes/categories');
+const coursesRouter = require('./routes/courses');
+
 
 
 require('dotenv').config();
@@ -42,6 +45,10 @@ app.use('/admin/courses', adminAuth, adminCoursesRouter);
 app.use('/admin/chapters', adminAuth, adminChaptersRouter);
 app.use('/admin/charts', adminAuth, adminChartsRouter);
 app.use('/admin/auth', adminAuthRouter);
+// 前台路由配置
+app.use('/categories', categoriesRouter);
+app.use('/courses', coursesRouter);
+
 
 
 
